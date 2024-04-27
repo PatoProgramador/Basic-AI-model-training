@@ -1,11 +1,11 @@
 import pandas as pd
 import seaborn as sb
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import plot_tree
 import matplotlib.pyplot as plt
 
 datos = pd.read_csv("train.csv")
@@ -48,18 +48,36 @@ for i in range(1,15):
     predicciones = modelo.predict(X_pru)
     exactitud = accuracy_score(Y_pru, predicciones)
     if exactitud > better_accuracy['accuracy']:
-        better_accuracy['accuracy'] = exactitud
+        better_accuracy["accuracy"] = exactitud
         better_accuracy["index"] = i
     results.append(exactitud)
     print(f"La exactitud del modelo con depth {i} es: {exactitud}")
 
 # Grafica de las distintas accuracy
-sb.lineplot(data=results)
-plt.show()
+# sb.lineplot(data=results)
+# plt.show()
 
 # Modelo con mejor accuracy
 modelo = DecisionTreeClassifier(max_depth=better_accuracy["index"])
 modelo.fit(X_ent, Y_ent)
 predicciones = modelo.predict(X_pru)
 exactitud = accuracy_score(Y_pru, predicciones)
-print(exactitud)
+
+# Reportes más especificos del modelo
+print("-----------------------------------------------------------------------")
+print("-------------------------Clasificaction report-------------------------")
+print("-----------------------------------------------------------------------")
+print(classification_report(Y_pru, predicciones))
+print("-----------------------------------------------------------------------")
+print("------------------------------Data frame-------------------------------")
+print("-----------------------------------------------------------------------")
+print(pd.DataFrame(confusion_matrix(Y_pru, predicciones), columns=["Pred: No", "Pred: Si"], index=["Real:No", "Real:Si"]))
+
+plt.figure(figsize=(10, 8))
+plot_tree(
+    modelo,
+    feature_names= X_ent.columns,
+    class_names= ["Murio", "Vivio"],
+    filled=True, label="none"
+)
+plt.show()
