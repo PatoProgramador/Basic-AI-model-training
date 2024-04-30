@@ -1,0 +1,7 @@
+from sklearn import datasets
+
+datos = datasets.load_breast_cancer(as_frame=True)
+
+# print(datos.frame.isna().sum())
+
+print(datos.frame.describe())
