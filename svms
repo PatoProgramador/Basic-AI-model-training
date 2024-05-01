@@ -16,10 +16,35 @@ Y = datos.target
 
 X_ent,X_pru, Y_ent, Y_pru = train_test_split(X,Y, test_size=.2)
 
-model = svm.SVC()
-model.fit(X_ent, Y_ent)
+kernels = ["linear", "rbf", "sigmoid"]
+gammas = [1, .01, .001, .0001, .00001]
 
-predi = model.predict(X_pru)
+better_accuracy_and_precision = {
+    "accuracy": 0,
+    "precision": 0,
+    "kernel": "",
+    "gamma": ""
+}
 
-print("Exactitud: ", metrics.accuracy_score(Y_pru, predi))
-print("Precision: ", metrics.precision_score(Y_pru, predi))
+for kernel in kernels:
+    for gamma in gammas:
+        model = svm.SVC(kernel=kernel, gamma=gamma)
+        model.fit(X_ent, Y_ent)
+
+        predi = model.predict(X_pru)
+        
+        accurracy = metrics.accuracy_score(Y_pru, predi)
+        precision = metrics.precision_score(Y_pru, predi)
+        
+        if accurracy > better_accuracy_and_precision["accuracy"] and precision > better_accuracy_and_precision["precision"]:
+            better_accuracy_and_precision["accuracy"] = accurracy
+            better_accuracy_and_precision["precision"] = precision
+            better_accuracy_and_precision["kernel"] = kernel
+            better_accuracy_and_precision["gamma"] = gamma
+
+        print(f"{kernel}: Gamma: {gamma} Exactitud: ", accurracy)
+        print(f"{kernel}: Gamma: {gamma} Precision: ", precision)
+        print("*****************************************************")
+        
+print("Mejor perfomance")
+print(better_accuracy_and_precision)   
