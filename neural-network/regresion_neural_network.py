@@ -7,9 +7,9 @@ datos = pd.read_csv('celsius.csv')
 X = datos["celsius"].values
 y = datos["fahrenheit"].values
 
-model = tf.keras.sequential([
+model = tf.keras.Sequential([
     tf.keras.layers.Input(shape=(1,)), # La entrada, los datos celsius: 1 solo dato
-    tf.keras.layer.Dense(units=1), # La salida, es un solo dato, los grados fahrenheit
+    tf.keras.layers.Dense(units=1) # La salida, es un solo dato, los grados fahrenheit
 ])
 
 model.compile(
@@ -25,7 +25,7 @@ plt.plot(training.history["loss"])
 
 # prediccion
 c = 18
-predict = model.predict([c])
+predict = model.predict([[c]])
 print(f"Prediccion: {c} son {predict[0]} fahrenheit")
 
 print(model.layers[0].get_weights())
